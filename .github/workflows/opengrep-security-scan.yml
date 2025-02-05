@@ -24,11 +24,7 @@ jobs:
       - name: Install opengrep
         run: |
           pip install git+https://github.com/opengrep/opengrep.git
-          echo "Verifying installation..."
-          pip show opengrep
-          echo "Checking opengrep command..."
-          which opengrep || echo "opengrep command not found in PATH"
-
+          
       - name: Run SAST with opengrep
         run: |
           # If opengrep is installed as a module, use python -m to run it
