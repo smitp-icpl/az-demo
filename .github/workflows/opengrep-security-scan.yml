@@ -30,6 +30,7 @@ jobs:
           git clone https://github.com/opengrep/opengrep.git
           cd opengrep
           pip install . -v
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Verify working directory
         run: |
@@ -38,12 +39,10 @@ jobs:
 
       - name: Verify opengrep Installation
         run: |
-          pip list  # Confirm if opengrep is installed
-          which opengrep  # Check if opengrep is in PATH
-          find $HOME -name "opengrep"  # Search for opengrep in home directories
-          find /usr/local/bin -name "opengrep"  # Search in common binary directories
-          find /usr/bin -name "opengrep"
-          pip show opengrep  # Check if opengrep is installed
+          pip list
+          which opengrep || echo "opengrep not found in PATH"
+          find $HOME/.local/bin -name "opengrep" || echo "opengrep not found in .local/bin"
+          pip show opengrep || echo "opengrep not installed via pip"
 
       - name: Run SAST with opengrep
         run: |
