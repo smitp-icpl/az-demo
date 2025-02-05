@@ -21,15 +21,20 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Ensure pip is up to date
+        run: |
+          python -m pip install --upgrade pip
+
       - name: Clone and Install opengrep
         run: |
           git clone https://github.com/opengrep/opengrep.git
           cd opengrep
-          pip install .
+          pip install . -v
 
-      - name: Add opengrep to PATH
+      - name: Verify working directory
         run: |
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          pwd
+          ls -al
 
       - name: Verify opengrep Installation
         run: |
@@ -38,6 +43,7 @@ jobs:
           find $HOME -name "opengrep"  # Search for opengrep in home directories
           find /usr/local/bin -name "opengrep"  # Search in common binary directories
           find /usr/bin -name "opengrep"
+          pip show opengrep  # Check if opengrep is installed
 
       - name: Run SAST with opengrep
         run: |
@@ -48,3 +54,55 @@ jobs:
         with:
           name: opengrep-report
           path: opengrep-report.json
+
+# --------------------
+# name: Security Scan with opengrep
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - main
+
+# jobs:
+#   sast_scan:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v4
+
+#       - name: Set up Python
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: '3.x'
+
+#       - name: Clone and Install opengrep
+#         run: |
+#           git clone https://github.com/opengrep/opengrep.git
+#           cd opengrep
+#           pip install .
+
+#       - name: Add opengrep to PATH
+#         run: |
+#           echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+#       - name: Verify opengrep Installation
+#         run: |
+#           pip list  # Confirm if opengrep is installed
+#           which opengrep  # Check if opengrep is in PATH
+#           find $HOME -name "opengrep"  # Search for opengrep in home directories
+#           find /usr/local/bin -name "opengrep"  # Search in common binary directories
+#           find /usr/bin -name "opengrep"
+
+#       - name: Run SAST with opengrep
+#         run: |
+#           opengrep scan ./src --output opengrep-report.json || python -m opengrep scan ./src --output opengrep-report.json
+
+#       - name: Upload opengrep Report
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: opengrep-report
+#           path: opengrep-report.json
