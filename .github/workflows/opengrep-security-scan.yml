@@ -23,7 +23,7 @@ jobs:
 
       - name: Install opengrep
         run: |
-          pip install opengrep
+          pip install git+https://github.com/opengrep/opengrep.git
 
       - name: Run SAST with opengrep
         run: |
