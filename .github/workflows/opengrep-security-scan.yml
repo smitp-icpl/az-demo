@@ -31,9 +31,17 @@ jobs:
         run: |
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
+      - name: Verify opengrep Installation
+        run: |
+          pip list  # Confirm if opengrep is installed
+          which opengrep  # Check if opengrep is in PATH
+          find $HOME -name "opengrep"  # Search for opengrep in home directories
+          find /usr/local/bin -name "opengrep"  # Search in common binary directories
+          find /usr/bin -name "opengrep"
+
       - name: Run SAST with opengrep
         run: |
-          opengrep scan ./src --output opengrep-report.json
+          opengrep scan ./src --output opengrep-report.json || python -m opengrep scan ./src --output opengrep-report.json
 
       - name: Upload opengrep Report
         uses: actions/upload-artifact@v4
