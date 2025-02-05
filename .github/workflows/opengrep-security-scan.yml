@@ -36,11 +36,12 @@ jobs:
 
       - name: Run SAST with OpenGREP
         run: |
-          if [ -d "rules" ]; then
-            semgrep scan --sarif-output=sarif.json -f rules code
-          else
-            semgrep scan --sarif --output=sarif.json --config=auto
-          fi
+           run: |
+              if [ -d "rules" ]; then
+                semgrep scan --sarif-output=opengrep-report.json -f rules code
+              else
+                semgrep scan --sarif --output=opengrep-report.json --config=auto
+              fi
 
       - name: Upload OpenGREP Report
         uses: actions/upload-artifact@v4
