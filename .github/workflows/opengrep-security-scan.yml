@@ -21,14 +21,21 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install opengrep
+      - name: Upgrade pip and Install opengrep
         run: |
-          pip install git+https://github.com/opengrep/opengrep.git
-          
+          python -m pip install --upgrade pip
+          pip install --force-reinstall git+https://github.com/opengrep/opengrep.git
+          pip show opengrep  # Verify opengrep is installed
+          which opengrep || echo "opengrep not found in PATH"
+          echo "User base binary directory:"
+          ls -la $(python -m site --user-base)/bin  # Check where it's installed
+          echo "Python site-packages:"
+          python -m site  # Show Python paths to confirm where modules are being installed
+
       - name: Run SAST with opengrep
         run: |
-          # If opengrep is installed as a module, use python -m to run it
-          python -m opengrep scan ./src --output opengrep-report.json
+          export PATH="$HOME/.local/bin:$PATH"  # Add user base bin to PATH
+          opengrep scan ./src --output opengrep-report.json || python -m opengrep scan ./src --output opengrep-report.json
 
       - name: Upload opengrep Report
         uses: actions/upload-artifact@v4
