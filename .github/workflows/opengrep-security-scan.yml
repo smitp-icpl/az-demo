@@ -21,19 +21,26 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install OpenGREP
+      - name: Install OpenGREP (semgrep)
         run: |
-          python -m pip install --upgrade pip
-          pip install git+https://github.com/opengrep/opengrep.git
+          # python -m pip install --upgrade pip
+          # pip install git+https://github.com/opengrep/opengrep.git
+          pip install semgrep
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          semgrep --version
 
-      - name: Verify OpenGREP Installation
+      - name: Verify OpenGrep Installation
         run: |
-          pip list | grep opengrep
-          python -c "import opengrep; print(opengrep.__version__)"
+          which semgrep || echo "OpenGrep (Semgrep) not found"
+          semgrep --help
 
       - name: Run SAST with OpenGREP
         run: |
-          python -m opengrep scan . --output opengrep-report.json
+          if [ -d "rules" ]; then
+            semgrep scan --sarif-output=sarif.json -f rules code
+          else
+            semgrep scan --sarif --output=sarif.json --config=auto
+          fi
 
       - name: Upload OpenGREP Report
         uses: actions/upload-artifact@v4
