@@ -27,9 +27,13 @@ jobs:
           cd opengrep
           pip install .
 
+      - name: Add opengrep to PATH
+        run: |
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
       - name: Run SAST with opengrep
         run: |
-          python -m opengrep scan ./src --output opengrep-report.json
+          opengrep scan ./src --output opengrep-report.json
 
       - name: Upload opengrep Report
         uses: actions/upload-artifact@v4
