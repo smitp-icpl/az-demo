@@ -26,12 +26,10 @@ jobs:
           pip install semgrep
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           semgrep --version
-
       - name: Verify OpenGrep Installation
         run: |
           which semgrep || echo "OpenGrep (Semgrep) not found"
           semgrep --help
-
       # - name: Run SAST with OpenGREP
       #   run: |
       #      run: |
@@ -48,7 +46,6 @@ jobs:
           else
             semgrep scan --sarif --output=opengrep-results.sarif --config=auto
           fi
-
       # - name: Upload OpenGREP Report
       #   uses: actions/upload-artifact@v4
       #   with:
