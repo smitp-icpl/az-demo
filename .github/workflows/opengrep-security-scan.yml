@@ -3,7 +3,7 @@ name: Security Scan with OpenGREP
 on:
   push:
     branches:
-      - dev
+      - main
   # pull_request:
   #   branches:
   #     - main
