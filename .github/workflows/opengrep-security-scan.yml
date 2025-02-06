@@ -23,8 +23,6 @@ jobs:
 
       - name: Install OpenGREP (semgrep)
         run: |
-          # python -m pip install --upgrade pip
-          # pip install git+https://github.com/opengrep/opengrep.git
           pip install semgrep
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           semgrep --version
@@ -34,17 +32,36 @@ jobs:
           which semgrep || echo "OpenGrep (Semgrep) not found"
           semgrep --help
 
-      - name: Run SAST with OpenGREP
-        run: |
-           run: |
-              if [ -d "rules" ]; then
-                semgrep scan --sarif-output=opengrep-report.json -f rules code
-              else
-                semgrep scan --sarif --output=opengrep-report.json --config=auto
-              fi
+      # - name: Run SAST with OpenGREP
+      #   run: |
+      #      run: |
+      #         if [ -d "rules" ]; then
+      #           semgrep scan --sarif-output=phishing_opengrep-report.json -f rules code
+      #         else
+      #           semgrep scan --sarif --output=phishing_opengrep-report.json --config=auto
+      #         fi
 
-      - name: Upload OpenGREP Report
+      - name: Run SAST with OpenGREP and Generate SARIF Report
+        run: |
+          if [ -d "rules" ]; then
+            semgrep scan --sarif --output=opengrep-results.sarif -f rules code
+          else
+            semgrep scan --sarif --output=opengrep-results.sarif --config=auto
+          fi
+
+      # - name: Upload OpenGREP Report
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: phishing_opengrep-report
+      #     path: phishing_opengrep-report.json
+
+      - name: Upload OpenGREP SARIF Report
         uses: actions/upload-artifact@v4
         with:
-          name: opengrep-report
-          path: opengrep-report.json
+          name: opengrep-sarif-report
+          path: opengrep-results.sarif
+
+      - name: Upload SARIF Report to GitHub Security Tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: opengrep-results.sarif
